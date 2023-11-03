@@ -1,0 +1,2 @@
+compile it with: gcc mmap.c -lm -o mmap
+run it with: ./mmap 16
