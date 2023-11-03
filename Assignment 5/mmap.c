@@ -1,3 +1,7 @@
+/*
+* Team Members: Subhrajit, Pratyush
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -64,11 +68,13 @@ static int page_access_count;
 /* contains the maximum elements possible for a page */
 int max_ele_per_page;
 
+struct timespec ts;
 /*initializing the page tracking structure*/
 static void 
 initialize_page_access_history(){
   for(int i=0;i<N;i++){
-    page_access_history[i].last_accessed_time=time(NULL);
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    page_access_history[i].last_accessed_time=ts.tv_nsec;
     page_access_history[i].reference_bit=-1;
     page_access_history[i].page_addr=NULL;
     page_access_history[i].starting_element=-1;
@@ -217,7 +223,7 @@ static void handle_sigsegv(int sig, siginfo_t *si, void *ctx) {
     /*updating the victim page entry in the page_access_history*/
     page_access_history[replacement_page_number].page_addr=new_page;
     page_access_history[replacement_page_number].reference_bit=0;
-    struct timespec ts;
+
     clock_gettime(CLOCK_MONOTONIC, &ts);
     page_access_history[replacement_page_number].last_accessed_time=ts.tv_nsec;
     page_access_history[replacement_page_number].start_pos=start_index;
@@ -337,7 +343,6 @@ test_sqrt_region(void)
     int i;
     /* if page is not already there in page_access_history find a replacement page then update it, otherwise update access time*/
     if((i=isPageCached(page_addr,ele[0],start_pos))>-1){
-        struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
         /* updating accessed time and reference bit */
         page_access_history[i].last_accessed_time=ts.tv_nsec;
@@ -359,7 +364,6 @@ test_sqrt_region(void)
       page_access_history[replacement_page_number].page_addr=(void *)page_addr;
       page_access_history[replacement_page_number].starting_element=ele[0]; 
       page_access_history[replacement_page_number].reference_bit=0;
-      struct timespec ts;
       clock_gettime(CLOCK_MONOTONIC, &ts);
       page_access_history[replacement_page_number].last_accessed_time=ts.tv_nsec;
       if (pos>=max_ele_per_page) {
@@ -428,7 +432,6 @@ test_sqrt_region_1(void)
     int i;
     /* if page is not already there in page_access_history find a replacement page then update it, otherwise update access time*/
     if((i=isPageCached(page_addr,ele[0],start_pos))>-1){
-        struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
         /* updating accessed time and reference bit */
         page_access_history[i].last_accessed_time=ts.tv_nsec;
@@ -450,7 +453,7 @@ test_sqrt_region_1(void)
       page_access_history[replacement_page_number].page_addr=(void *)page_addr;
       page_access_history[replacement_page_number].starting_element=ele[0]; 
       page_access_history[replacement_page_number].reference_bit=0;
-      struct timespec ts;
+
       clock_gettime(CLOCK_MONOTONIC, &ts);
       page_access_history[replacement_page_number].last_accessed_time=ts.tv_nsec;
       if (pos>=max_ele_per_page) {
@@ -534,7 +537,7 @@ test_sqrt_region_1000(void)
       page_access_history[replacement_page_number].page_addr=(void *)page_addr;
       page_access_history[replacement_page_number].starting_element=ele[0]; 
       page_access_history[replacement_page_number].reference_bit=0;
-      struct timespec ts;
+
       clock_gettime(CLOCK_MONOTONIC, &ts);
       page_access_history[replacement_page_number].last_accessed_time=ts.tv_nsec;
       if (pos>=max_ele_per_page) {
