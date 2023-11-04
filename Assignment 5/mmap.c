@@ -358,6 +358,7 @@ test_sqrt_region(void)
           break;
         case CLOCK:
           replacement_page_number=clock_replace_page();
+          break;
         default:
           replacement_page_number=fifo_replace_page();
       }
@@ -447,6 +448,7 @@ test_sqrt_region_1(void)
           break;
         case CLOCK:
           replacement_page_number=clock_replace_page();
+          break;
         default:
           replacement_page_number=fifo_replace_page();
       }
@@ -480,7 +482,7 @@ test_sqrt_region_1000(void)
   double correct_sqrt;
 
   /* replacement policy*/
-  page_replacement_policy=LRU;
+  page_replacement_policy=CLOCK;
   printf("Workload 3, policy used: %s\n",policyNames[page_replacement_policy]);
   page_access_count=0;
   page_fault_count=0;
@@ -531,6 +533,7 @@ test_sqrt_region_1000(void)
           break;
         case CLOCK:
           replacement_page_number=clock_replace_page();
+          break;
         default:
           replacement_page_number=fifo_replace_page();
       }
