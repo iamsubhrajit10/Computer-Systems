@@ -42,9 +42,9 @@ enum Policy{
 enum Policy page_replacement_policy;
 
 const char* policyNames[] = {
-    "FIFO",
-    "LRU",
-    "CLOCK"
+  "FIFO",
+  "LRU",
+  "CLOCK"
 };
 /* Define a page frame struct*/
 typedef struct {
@@ -69,8 +69,8 @@ int64_t max_ele_per_page;
 struct timespec ts;
 
 static int64_t timestamp() {
-    clock_gettime(CLOCK_MONOTONIC, &ts);  
-    return (int64_t)(ts.tv_sec) * (int64_t)1000000000 + (int64_t)(ts.tv_nsec);
+  clock_gettime(CLOCK_MONOTONIC, &ts);  
+  return (int64_t)(ts.tv_sec) * (int64_t)1000000000 + (int64_t)(ts.tv_nsec);
 }
 
 /*initializing the page tracking structure*/
@@ -90,8 +90,8 @@ initialize_page_access_history(){
 /*to print64_t the page tracking history*/
 static void
 printPageTracking(){
-    printf("Page No, Page address, Start position, Ending Position\n");
-    for(int64_t i=0;i<N;i++){
+  printf("Page No, Page address, Start position, Ending Position\n");
+  for(int64_t i=0;i<N;i++){
     uintptr_t start_addr = (uintptr_t)sqrts;
     uintptr_t page_addr = page_access_history[i].page_addr;
     unsigned long start_entry_pos = (page_addr-start_addr)/sizeof(double);
@@ -114,11 +114,11 @@ int64_t fifo_replace_page() {
 * Returns the index of the LRU page in page_access_history.
 */ 
 int64_t lru_replace_page() {
-    if(page_replace_count<N)
-      return page_replace_count++;
-    page_replace_count++;
-    // Initialize the LRU page index.
-    int64_t lru_page_index = 0;
+  if(page_replace_count<N)
+    return page_replace_count++;
+  page_replace_count++;
+  // Initialize the LRU page index.
+  int64_t lru_page_index = 0;
   // Iterate over the cache and find the page with the oldest last accessed time.
   for (int64_t i = 1; i < N; i++) {
     if (page_access_history[i].last_accessed_time < page_access_history[lru_page_index].last_accessed_time) {
@@ -169,22 +169,22 @@ getPageIndex(uintptr_t page_addr, double ele, int64_t pos){
 }
 
 void update_page_ref_history(int64_t pos) {
-    /* address of the currently accessed page*/
-    uintptr_t page_addr = (uintptr_t)&sqrts[pos];
-    /* base address the currently accessed page*/
-    page_addr = align_down(page_addr,page_size);
-    double *ele=(double *)page_addr;
-    int64_t i;
-    page_access_count++;
+  /* address of the currently accessed page*/
+  uintptr_t page_addr = (uintptr_t)&sqrts[pos];
+  /* base address the currently accessed page*/
+  page_addr = align_down(page_addr,page_size);
+  double *ele=(double *)page_addr;
+  int64_t i;
+  page_access_count++;
 
-    /* starting pos of the current page  */
-    int64_t start_pos=(pos-pos%max_ele_per_page);
+  /* starting pos of the current page  */
+  int64_t start_pos=(pos-pos%max_ele_per_page);
 
-    if((i=getPageIndex(page_addr,ele[0],start_pos))>-1){
-        /* updating accessed time and reference bit */
-        page_access_history[i].last_accessed_time=timestamp();
-        page_access_history[i].clock_reference_bit=1; 
-    }
+  if((i=getPageIndex(page_addr,ele[0],start_pos))>-1){
+    /* updating accessed time and reference bit */
+    page_access_history[i].last_accessed_time=timestamp();
+    page_access_history[i].clock_reference_bit=1; 
+  }
 }
 
 /* Use this helper function as an oracle for square root values. */
@@ -198,66 +198,66 @@ calculate_sqrts(double *sqrt_pos, int64_t start, int64_t nr)
 
 /* page fault handler */
 static void handle_sigsegv(int sig, siginfo_t *si, void *ctx) {
-    
-    page_fault_count++;
-    uintptr_t fault_addr = (uintptr_t)si->si_addr;
-    uintptr_t sqrt_addr= (uintptr_t )(&(sqrts[0]));
 
-    /* base address of the faulty page */
-    uintptr_t base_addr = align_down(fault_addr, page_size);
+  page_fault_count++;
+  uintptr_t fault_addr = (uintptr_t)si->si_addr;
+  uintptr_t sqrt_addr= (uintptr_t )(&(sqrts[0]));
 
-    /* starting index of the values to be computed for sqrt next */
-    int64_t start_index = (base_addr - (uintptr_t)sqrts) / sizeof(double);
+  /* base address of the faulty page */
+  uintptr_t base_addr = align_down(fault_addr, page_size);
 
-    /* replacement victim page number in page_access_history */
-    int64_t replacement_page_number;
-    void *replacement_page=NULL;
+  /* starting index of the values to be computed for sqrt next */
+  int64_t start_index = (base_addr - (uintptr_t)sqrts) / sizeof(double);
 
-      switch (page_replacement_policy)
-      {
-      case FIFO:
-        replacement_page_number=fifo_replace_page();
-        break;
+  /* replacement victim page number in page_access_history */
+  int64_t replacement_page_number;
+  void *replacement_page=NULL;
 
-      case LRU:
-        replacement_page_number=lru_replace_page();
-        break;
+  switch (page_replacement_policy)
+  {
+    case FIFO:
+      replacement_page_number=fifo_replace_page();
+      break;
 
-      case CLOCK:
-        replacement_page_number=clock_replace_page();
-        break;
+    case LRU:
+      replacement_page_number=lru_replace_page();
+      break;
 
-      default:
-        replacement_page_number=fifo_replace_page();
-        break;
-      }
-    /* replacement page_address of the replacement page in the page_access_history */
-    replacement_page=(void *)page_access_history[replacement_page_number].page_addr;
-  
-    /* to allocate new page, trying to unmap the last page */
-    if (replacement_page&& munmap(replacement_page, page_size)<0){
-      perror("munmap failed");
-      exit(EXIT_FAILURE);
-    }
+    case CLOCK:
+      replacement_page_number=clock_replace_page();
+      break;
 
-    // trying to map the new page from the base address of the faulty page
-    uintptr_t *new_page;
-    if ((new_page = mmap((void *)base_addr, page_size,
-      PROT_READ | PROT_WRITE,
-      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)) < 0) {
-        printf("mmap fails\n");
-        exit(EXIT_FAILURE);
-    }
+    default:
+      replacement_page_number=fifo_replace_page();
+      break;
+  }
+  /* replacement page_address of the replacement page in the page_access_history */
+  replacement_page=(void *)page_access_history[replacement_page_number].page_addr;
 
-    // now, computing the sqrts for this new page
-    calculate_sqrts((double *)new_page, start_index, max_ele_per_page);
+  /* to allocate new page, trying to unmap the last page */
+  if (replacement_page&& munmap(replacement_page, page_size)<0){
+    perror("munmap failed");
+    exit(EXIT_FAILURE);
+  }
 
-    /*updating the victim page entry in the page_access_history*/
-    page_access_history[replacement_page_number].page_addr=(uintptr_t)new_page;
-    page_access_history[replacement_page_number].clock_reference_bit=0;
+  // trying to map the new page from the base address of the faulty page
+  uintptr_t *new_page;
+  if ((new_page = mmap((void *)base_addr, page_size,
+                       PROT_READ | PROT_WRITE,
+                       MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)) < 0) {
+    printf("mmap fails\n");
+    exit(EXIT_FAILURE);
+  }
 
-    page_access_history[replacement_page_number].last_accessed_time=timestamp();
-    page_access_history[replacement_page_number].page_valid=1;
+  // now, computing the sqrts for this new page
+  calculate_sqrts((double *)new_page, start_index, max_ele_per_page);
+
+  /*updating the victim page entry in the page_access_history*/
+  page_access_history[replacement_page_number].page_addr=(uintptr_t)new_page;
+  page_access_history[replacement_page_number].clock_reference_bit=0;
+
+  page_access_history[replacement_page_number].last_accessed_time=timestamp();
+  page_access_history[replacement_page_number].page_valid=1;
 }
 
 static void
@@ -312,10 +312,10 @@ static void free_page_access_history()
 {
   for(int64_t i=0;i<N;i++){
     if (munmap((void*)page_access_history[i].page_addr,page_size) == -1) {
-		  fprintf(stderr, "Couldn't munmap() region for sqrt table; %s\n",
-			strerror(errno));
-		  exit(EXIT_FAILURE);
-	  }
+      fprintf(stderr, "Couldn't munmap() region for sqrt table; %s\n",
+      strerror(errno));
+      exit(EXIT_FAILURE);
+    }
   }
   free(page_access_history);
 }
@@ -440,11 +440,11 @@ main(int argc, char *argv[])
   printf("page_size is %ld\n", page_size);
   setup_sqrt_region();
   srand(0xDEADBEEF);
-  
+
   int64_t faults_fifo_orig , faults_fifo_1, faults_fifo_2;
   int64_t faults_lru_orig , faults_lru_1, faults_lru_2;
   int64_t faults_clock_orig , faults_clock_1, faults_clock_2;
-  
+
   page_replacement_policy=FIFO;
   // printf("Testing workload 1...\n");
   test_sqrt_region();
@@ -453,11 +453,11 @@ main(int argc, char *argv[])
   // printf("Testing workload 2...\n");
   test_sqrt_region_1();
   faults_fifo_1 = page_fault_count;
-  
+
   // printf("Testing workload 3...\n");
   test_sqrt_region_1000();
   faults_fifo_2 = page_fault_count;
-    
+
   page_replacement_policy=LRU;
   // printf("Testing workload 1...\n");
   test_sqrt_region();
@@ -466,11 +466,11 @@ main(int argc, char *argv[])
   // printf("Testing workload 2...\n");
   test_sqrt_region_1();
   faults_lru_1 = page_fault_count;
-  
+
   // printf("Testing workload 3...\n");
   test_sqrt_region_1000();
   faults_lru_2 = page_fault_count;
-  
+
   page_replacement_policy=CLOCK;
   // printf("Testing workload 1...\n");
   test_sqrt_region();
@@ -479,16 +479,16 @@ main(int argc, char *argv[])
   // printf("Testing workload 2...\n");
   test_sqrt_region_1();
   faults_clock_1 = page_fault_count;
-  
+
   // printf("Testing workload 3...\n");
   test_sqrt_region_1000();
   faults_clock_2 = page_fault_count;
-  
+
   printf("\nResults:\n");
   printf("N = %ld\t\t\t|FIFO\t|LRU\t|CLOCK\t|\n", N);
   printf("Workload Original\t|%ld\t|%ld\t|%ld\t|\n",faults_fifo_orig, faults_lru_orig, faults_clock_orig);
   printf("Workload 1\t\t|%ld\t|%ld\t|%ld\t|\n",faults_fifo_1, faults_lru_1, faults_clock_1);
   printf("Workload 2\t\t|%ld\t|%ld\t|%ld\t|\n",faults_fifo_2, faults_lru_2, faults_clock_2);
-  
+
   return 0;
 }
