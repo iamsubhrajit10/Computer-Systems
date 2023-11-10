@@ -65,7 +65,7 @@ def run():
 
     # Measure the latency with iperf
     print('Iperf latency:')
-    h6.cmd('iperf -s &')  # start iperf server on h6
+
     iperf_print=h1.cmd('iperf -c %s -t 10' % h6.IP())  # start iperf client on h1
     print(iperf_print)
     CLI(net)
