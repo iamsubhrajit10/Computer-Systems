@@ -1,5 +1,5 @@
 # Packages required
-mininet, openvswitch
+mininet, openvswitch, python
 # Installation guide
 http://mininet.org/download/#option-1-mininet-vm-installation-easy-recommended 
 
