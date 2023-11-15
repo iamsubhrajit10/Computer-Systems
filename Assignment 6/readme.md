@@ -21,7 +21,7 @@ $ ssh -Y mininet@192.168.X.Y
 
 # Run
 ```bash
-$ sudo python <filename.py>
+$ sudo python3 <filename.py>
 ```
 It will execute: adding controllers, adding switches, adding hosts etc.
 
@@ -29,3 +29,17 @@ It will execute: adding controllers, adding switches, adding hosts etc.
 mininet>
 ```
 Now you may try several options listed by typing help
+
+# part 1
+run: 
+```bash
+$>sudo python3 topology_part1.py
+```
+then follow the scripts to be typed in CLI_scripts_part1.md
+
+# part 2 
+run: 
+```bash
+$>sudo python3 topology_part2.py
+```
+then follow the scripts to be typed in CLI_scripts_part2.md
