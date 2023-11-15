@@ -1,4 +1,4 @@
-# CLI Scripts
+# CLI Scripts Part 1
 run these commands one by one on the CLI of mininet
 
 # Test the network
