@@ -9,8 +9,8 @@ already built into Linux.
 The topology creates 3 routers and 4 IP subnets:
 
     - 192.168.1.0/24 (ra-h1-h2, IP: 192.168.1.{1, 100, 101})
-    - 192.168.1.0/24 (rb-h3-h4, IP: 192.168.1.{1, 100, 101})
-    - 192.168.1.0/24 (rc-h5-h6, IP: 192.168.1.{1, 100, 101})
+    - 192.168.2.0/24 (rb-h3-h4, IP: 192.168.2.{1, 100, 101})
+    - 192.168.3.0/24 (rc-h5-h6, IP: 192.168.3.{1, 100, 101})
     - 10.0.0.0/8 (ra-rb-rc, IP: 10.0.0.{1, 2, 3})
 
 The example relies on default routing entries that are
@@ -48,25 +48,26 @@ class NetworkTopo( Topo ):
 
     # pylint: disable=arguments-differ
     def build( self, **_opts ):
-
-        eth0 = '192.168.1.1/24'  # IP address for rx-eth0
         
-        host_IP_1 = '192.168.1.100/24'
-        host_IP_2 = '192.168.1.101/24'
-        host_route = 'via 192.168.1.1'
+        ra_IP = '192.168.1.1/24'
+        rb_IP = '192.168.2.1/24'
+        rc_IP = '192.168.3.1/24'
+        host_route_1 = f'via {ra_IP[:-3]}'
+        host_route_2 = f'via {rb_IP[:-3]}'
+        host_route_3 = f'via {rc_IP[:-3]}'
 
-        ra = self.addNode( 'ra', cls=LinuxRouter, ip=eth0 )
-        rb = self.addNode( 'rb', cls=LinuxRouter, ip=eth0 )
-        rc = self.addNode( 'rc', cls=LinuxRouter, ip=eth0 )
+        ra = self.addNode( 'ra', cls=LinuxRouter, ip=ra_IP )
+        rb = self.addNode( 'rb', cls=LinuxRouter, ip=rb_IP )
+        rc = self.addNode( 'rc', cls=LinuxRouter, ip=rc_IP )
 
         s1, s2, s3, s4 = [ self.addSwitch( s ) for s in ( 's1', 's2', 's3', 's4' ) ]
         
         self.addLink( s1, ra, intfName2='ra-eth0',
-                      params2={ 'ip' : eth0 } )
+                      params2={ 'ip' : ra_IP } )
         self.addLink( s2, rb, intfName2='rb-eth0',
-                      params2={ 'ip' : eth0 } )
+                      params2={ 'ip' : rb_IP } )
         self.addLink( s3, rc, intfName2='rc-eth0',
-                      params2={ 'ip' : eth0 } )
+                      params2={ 'ip' : rc_IP } )
         
         self.addLink( s4, ra, intfName2='ra-eth1',
                       params2={ 'ip' : '10.0.0.1/8' } )
@@ -75,18 +76,18 @@ class NetworkTopo( Topo ):
         self.addLink( s4, rc, intfName2='rc-eth1',
                       params2={ 'ip' : '10.0.0.3/8' } )
         
-        h1 = self.addHost( 'h1', ip= host_IP_1,
-                           defaultRoute=host_route )
-        h2 = self.addHost( 'h2', ip=host_IP_2,
-                           defaultRoute=host_route )
-        h3 = self.addHost( 'h3', ip=host_IP_1,
-                           defaultRoute=host_route )
-        h4 = self.addHost( 'h4', ip=host_IP_2,
-                           defaultRoute=host_route )        
-        h5 = self.addHost( 'h5', ip=host_IP_1,
-                           defaultRoute=host_route )
-        h6 = self.addHost( 'h6', ip=host_IP_2,
-                           defaultRoute=host_route )
+        h1 = self.addHost( 'h1', ip= '192.168.1.100/24',
+                           defaultRoute=host_route_1 )
+        h2 = self.addHost( 'h2', ip='192.168.1.101/24',
+                           defaultRoute=host_route_1 )
+        h3 = self.addHost( 'h3', ip='192.168.2.100/24',
+                           defaultRoute=host_route_2 )
+        h4 = self.addHost( 'h4', ip='192.168.2.101/24',
+                           defaultRoute=host_route_2 )
+        h5 = self.addHost( 'h5', ip='192.168.3.100/24',
+                           defaultRoute=host_route_3 )
+        h6 = self.addHost( 'h6', ip='192.168.3.101/24',
+                           defaultRoute=host_route_3 )
         
         self.addLink(h1,s1)
         self.addLink(h2,s1)
@@ -100,9 +101,18 @@ def run():
     topo = NetworkTopo()
     net = Mininet( topo=topo,
                    waitConnected=True )  # controller is used by switches
+    
+    # Add routing for reaching networks that aren't directly connected
+    info(net['ra'].cmd("ip route add 192.168.2.0/24 via 10.0.0.2 dev ra-eth1"))
+    info(net['ra'].cmd("ip route add 192.168.3.0/24 via 10.0.0.3 dev ra-eth1"))
+    info(net['rb'].cmd("ip route add 192.168.1.0/24 via 10.0.0.1 dev rb-eth1"))
+    info(net['rb'].cmd("ip route add 192.168.3.0/24 via 10.0.0.3 dev rb-eth1"))
+    info(net['rc'].cmd("ip route add 192.168.1.0/24 via 10.0.0.1 dev rc-eth1"))
+    info(net['rc'].cmd("ip route add 192.168.2.0/24 via 10.0.0.2 dev rc-eth1"))
+    
     net.start()
-    info( '*** Routing Table on Router:\n' )
-    info( net[ 'ra' ].cmd( 'route' ) )
+    # info( '*** Routing Table on Router:\n' )
+    # info( net[ 'ra' ].cmd( 'route' ) )
     CLI( net )
     net.stop()
 
