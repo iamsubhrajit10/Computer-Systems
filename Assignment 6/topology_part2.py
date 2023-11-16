@@ -1,8 +1,17 @@
 #!/usr/bin/env python
-
 """
 topo2.py: Network for question 2
+
+creates a network with 2 switches and 4 hosts.
+switches s1 and s2 are interconnected.
+hosts h1 and h2 are connected to s1, and h3 and h4 are connected to s2.
+
+IP of h1: 192.168.1.1/24
+IP of h2: 192.168.1.2/24
+IP of h3: 192.168.1.3/24
+IP of h4: 192.168.1.4/24
 """
+
 
 
 from mininet.topo import Topo
