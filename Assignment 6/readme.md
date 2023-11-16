@@ -31,7 +31,7 @@ run:
 ```bash
 $>sudo python3 topology_part2.py --config {b,c} [--loss LOSS] --cc {vegas,reno,cubic,bbr} 
 ```
-loss parameter is optional. as per question LOSS ranges between 0 to 3 (0 when no loss, otherwise 1-3)
+loss parameter is optional for question a,b, and c. As per question LOSS ranges between 0 to 3 (0 when no loss, otherwise 1-3)
 
 to exit from CLI, type:
 ```bash
@@ -41,21 +41,23 @@ mininet>exit
 see the pings printed on the screen.
 
 ## for question b) 
-for e.g. we'trying to run with config b (i.e. just h1 to h4), 1% loss and congestion control scheme reno
+for e.g. we'trying to run with config b (i.e. just h1 to h4), no loss and congestion control scheme reno
 execute:
 ```bash
-$>sudo python3 topology_part2.py --config b --loss 1 --cc reno
+$>sudo python3 topology_part2.py --config b --cc reno
 ```
 
 
 ## for question c)
-for e.g. we're trying to run with config c (i.e. simulataneously run h1, h2, and h3 to h4), 3% loss and congestion control scheme bbr
+for e.g. we're trying to run with config c (i.e. simulataneously run h1, h2, and h3 to h4), no loss and congestion control scheme bbr
 ```bash
-$>sudo python3 topology_part2.py --config c --loss 3 --cc bbr
+$>sudo python3 topology_part2.py --config c --cc bbr
 ```
-
-
-
+## for question d)
+for e.g. we're trying to run with config b (i.e. just h1 to h4), 3% loss and congestion control scheme bbr
+```bash
+$>sudo python3 topology_part2.py --config b --loss 3 --cc bbr
+```
 
 to view the tcpdump at s1 router through wireshark first execute the topology_part2.py, then execute:
 ```bash
