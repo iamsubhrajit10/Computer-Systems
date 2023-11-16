@@ -1,7 +1,7 @@
 # Team Information
 Team Members: Subhrajit Das(23210106), Pratyush Choudhury(23210075)
 # Packages required
-mininet VM, SSH Client with X11
+mininet VM, SSH Client with X11, traceroute
 # Installation guide
 [Guide link](http://mininet.org/download/#option-1-mininet-vm-installation-easy-recommended) 
 
