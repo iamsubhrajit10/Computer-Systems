@@ -11,6 +11,7 @@ $>sudo mn -c
 run on CLI: 
 ```bash
 mininet>pingall
+mininet>dump
 ```
 
 # Observation of route setup (question b)
