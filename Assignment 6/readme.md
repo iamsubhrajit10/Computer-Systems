@@ -37,10 +37,10 @@ to exit from CLI, type:
 ```bash
 mininet>exit
 ```
-## for question a) see the pings printed on the screen.
+## for question a) 
+see the pings printed on the screen.
 
-
-for question b) 
+## for question b) 
 for e.g. we'trying to run with config b (i.e. just h1 to h4), 1% loss and congestion control scheme reno
 execute:
 ```bash
@@ -48,7 +48,7 @@ $>sudo python3 topology_part2.py --config b --loss 1 --cc reno
 ```
 
 
-for question c)
+## for question c)
 for e.g. we're trying to run with config c (i.e. simulataneously run h1, h2, and h3 to h4), 3% loss and congestion control scheme bbr
 ```bash
 $>sudo python3 topology_part2.py --config c --loss 3 --cc bbr
