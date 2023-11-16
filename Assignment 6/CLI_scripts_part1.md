@@ -5,16 +5,16 @@ please run the following command before running the mininet code:
 ```bash
 $>sudo mn -c
 ```
-
-# Test the network (question a)
+# question a
+## Test the network 
 
 run on CLI: 
 ```bash
 mininet>pingall
 mininet>dump
 ```
-
-# Observation of route setup (question b)
+# question b
+## Observation of route setup
 start from begining i.e. open the python script by running 
 ```bash
 $>sudo python3 topology_part1.py
@@ -24,13 +24,13 @@ observing the routes for packets sent from
 mininet>h1 ping -c 4 h3 
 mininet>h1 ping -c 4 h6
 ```
-# Dumping all the routing table (for question d in context of question b)
+## Dumping all the routing table (for question d)
 ```bash
 mininet>ra route
 mininet>rb route
 mininet>rc route
 ```
-# Showing wireshark for route setup (question b)
+## Showing wireshark for route setup
 exit the mininet CLI 
 ```bash
 mininet>exit
@@ -52,8 +52,8 @@ $>sudo wireshark rc_dump.pcap
 ```
 On the wireshark, you can see various packets.
 notably the ICMP packets to trace the routes from h1 to h3 and h1 to h6.
-
-# Routes (question c)
+# question c
+## Routes
 again run the code with
 ```bash
 $>sudo python3 topology_part1.py
@@ -74,7 +74,7 @@ mininet>iperf h1 h6
 ```
 
 
-# Modification of Routing tables: (question c)
+## Modification of Routing tables:
 to change the default route of h1->ra->rc->h6 to h1->ra->rb->rc->h6
 ```bash
 mininet>ra ip route del 192.168.3.0/24
@@ -93,7 +93,7 @@ mininet>h1 ping h6
 mininet>iperf h1 h6
 ```
 
-# Dumping all the routing table (for question d in context of question c)
+## Dumping all the routing table (for question d)
 ```bash
 mininet>ra route
 mininet>rb route
