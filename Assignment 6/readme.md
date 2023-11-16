@@ -19,17 +19,6 @@ On client:
 $ ssh -Y mininet@192.168.X.Y
 ```
 
-# Run
-```bash
-$ sudo python3 <filename.py>
-```
-It will execute: adding controllers, adding switches, adding hosts etc.
-
-```bash
-mininet>
-```
-Now you may try several options listed by typing help
-
 # part 1
 run: 
 ```bash
