@@ -37,7 +37,7 @@ to exit from CLI, type:
 ```bash
 mininet>exit
 ```
-for question a) see the pings printed on the screen.
+## for question a) see the pings printed on the screen.
 
 
 for question b) 
