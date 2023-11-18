@@ -111,9 +111,21 @@ def run():
     info(net['rc'].cmd("ip route add 192.168.2.0/24 via 10.0.0.2 dev rc-eth1"))
     
     net.start()
-    # info( '*** Routing Table on Router:\n' )
-    # info( net[ 'ra' ].cmd( 'route' ) )
+    info( '*** Routing Table on Routers:\n' )
+    print('Router ra:')
+    info( net[ 'ra' ].cmd( 'route' ) )
+    print('Router rb:')
+    info( net[ 'rb' ].cmd( 'route' ) )
+    print('Router rc:')
+    info( net[ 'rc' ].cmd( 'route' ) )
+    ra_pcap = net['ra'].popen('tcpdump -i any -w ra_dump.pcap')
+    rb_pcap = net['rb'].popen('tcpdump -i any -w rb_dump.pcap')
+    rc_pcap = net['rc'].popen('tcpdump -i any -w rc_dump.pcap')
+    print('Run the commands as per CLI_scripts.md :')
     CLI( net )
+    ra_pcap.terminate()
+    rb_pcap.terminate()
+    rc_pcap.terminate()
     net.stop()
 
 
